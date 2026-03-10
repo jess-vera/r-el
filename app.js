@@ -3,8 +3,8 @@
    ============================================ */
 
 // ---- CONFIG ----
-// Replace with your active API key from console.anthropic.com
-const API_KEY = 'YOUR_API_KEY_HERE';
+
+const API_KEY = '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';
 
 // ---- SPLASH SCREEN ----
 (function initSplash() {
