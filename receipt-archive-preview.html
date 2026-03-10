@@ -1,0 +1,1866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Receipt as Emotional Ledger</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+  <style>
+/* ============================================
+   RECEIPT AS EMOTIONAL LEDGER
+   Aesthetic: Early computation / Hammersley 1969
+   Palette: off-white, gray, deep charcoal
+   NO ITALICS. NO BROWN.
+   ============================================ */
+
+:root {
+  --bg:       #ECEAE6;
+  --bg-dark:  #141414;
+  --gray:     #9A9A96;
+  --gray-mid: #787875;
+  --text:     #2A2A28;
+  --text-inv: #D0D0CC;
+  --border:   #C2C2BE;
+  --border-dk:#2A2A28;
+  --tag-sel:  #2A2A28;
+  --hover-lt: #E0DEDB;
+  --hover-dk: #1C1C1C;
+  --mono: 'IBM Plex Mono', 'Courier New', monospace;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 14px;
+}
+
+body {
+  font-family: var(--mono);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-align: justify;
+}
+
+::selection {
+  background: var(--text);
+  color: var(--bg);
+}
+
+/* GLYPH CANVAS */
+#glyph-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.03;
+}
+
+/* NAV */
+#nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0.7rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+}
+
+.nav-logo {
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  text-decoration: none;
+  color: var(--text);
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.6rem;
+}
+
+.nav-links a {
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  color: var(--gray-mid);
+  transition: color 0.3s;
+  font-weight: 400;
+}
+
+.nav-links a:hover {
+  color: var(--text);
+}
+
+/* SECTIONS */
+.section {
+  padding: 5rem 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.section--dark {
+  background: var(--bg-dark);
+  color: var(--text-inv);
+}
+
+.section-inner {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.section-label {
+  font-size: 0.55rem;
+  letter-spacing: 0.3em;
+  font-weight: 500;
+  margin-bottom: 0.8rem;
+  text-align: left;
+}
+
+.divider-chars {
+  font-size: 0.5rem;
+  letter-spacing: 0.15em;
+  color: var(--gray);
+  margin-bottom: 2.5rem;
+  overflow: hidden;
+  white-space: nowrap;
+  line-height: 1;
+  text-align: left;
+}
+
+.divider-chars--light {
+  color: #333;
+}
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+  padding: 5rem 2rem 4rem;
+}
+
+.hero-content {
+  max-width: 660px;
+  text-align: center;
+}
+
+.hero-title {
+  font-size: 2.8rem;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  line-height: 1.15;
+  margin-bottom: 2rem;
+  white-space: nowrap;
+}
+
+.hero-line {
+  width: 50px;
+  height: 1px;
+  background: var(--gray);
+  margin: 0 auto 2rem;
+}
+
+.hero-sub {
+  font-size: 0.6rem;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  line-height: 2;
+  color: var(--gray-mid);
+  max-width: 520px;
+  margin: 0 auto 0.6rem;
+}
+
+/* URGENCY */
+.urgency-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5rem;
+}
+
+.urgency-block h3 {
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  font-weight: 500;
+  margin-bottom: 0.8rem;
+  text-align: left;
+}
+
+.urgency-block p {
+  font-size: 0.75rem;
+  font-weight: 300;
+  line-height: 1.8;
+  color: var(--gray-mid);
+}
+
+/* FIELDS */
+.fields-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+  margin-bottom: 3.5rem;
+}
+
+.field-block {
+  padding: 2rem 0;
+  border-bottom: 1px solid #222;
+}
+
+.field-block:first-child {
+  border-top: 1px solid #222;
+}
+
+.field-number {
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  color: #555;
+  margin-bottom: 0.8rem;
+}
+
+.field-block h3 {
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.field-block p {
+  font-size: 0.75rem;
+  font-weight: 300;
+  line-height: 1.85;
+  color: #777;
+  max-width: 680px;
+}
+
+.field-statement {
+  margin-top: 2.5rem;
+  text-align: center;
+}
+
+.field-statement p {
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  line-height: 2.2;
+  font-weight: 400;
+  color: var(--text-inv);
+  text-align: center;
+}
+
+/* WHY */
+.why-intro {
+  margin-bottom: 2.5rem;
+}
+
+.why-intro p {
+  font-size: 0.8rem;
+  font-weight: 300;
+  line-height: 1.8;
+  color: var(--gray-mid);
+  max-width: 560px;
+}
+
+.why-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5rem;
+}
+
+.why-num {
+  font-size: 0.55rem;
+  letter-spacing: 0.3em;
+  color: var(--gray);
+  margin-bottom: 0.8rem;
+}
+
+.why-block h3 {
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  font-weight: 500;
+  margin-bottom: 0.8rem;
+  line-height: 1.6;
+}
+
+.why-block p {
+  font-size: 0.75rem;
+  font-weight: 300;
+  line-height: 1.8;
+  color: var(--gray-mid);
+}
+
+/* FORM */
+.submit-intro {
+  font-size: 0.75rem;
+  font-weight: 300;
+  line-height: 1.8;
+  color: #666;
+  max-width: 560px;
+  margin-bottom: 2.5rem;
+}
+
+.form-container {
+  max-width: 680px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.8rem;
+  margin-bottom: 1.8rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group--full {
+  margin-bottom: 1.8rem;
+}
+
+.section--dark label {
+  color: var(--text-inv);
+}
+
+label {
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.label-hint {
+  font-weight: 300;
+  color: #555;
+  letter-spacing: 0.1em;
+}
+
+input, select, textarea {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 300;
+  padding: 0.6rem 0.7rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  transition: border-color 0.3s;
+  outline: none;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--text);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--gray);
+}
+
+.section--dark input,
+.section--dark select,
+.section--dark textarea {
+  border-color: #333;
+  color: var(--text-inv);
+}
+
+.section--dark input:focus,
+.section--dark select:focus,
+.section--dark textarea:focus {
+  border-color: var(--text-inv);
+}
+
+.section--dark input::placeholder,
+.section--dark textarea::placeholder {
+  color: #444;
+}
+
+select {
+  appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23555'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.7rem center;
+  padding-right: 2rem;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.tags-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.tags-intro {
+  font-size: 0.6rem;
+  font-weight: 300;
+  color: #555;
+  margin-bottom: 0.8rem;
+  line-height: 1.6;
+}
+
+.tag-btn {
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+  font-weight: 400;
+  padding: 0.45rem 0.8rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--gray-mid);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tag-btn:hover {
+  border-color: var(--text);
+  color: var(--text);
+}
+
+.tag-btn.active {
+  background: var(--tag-sel);
+  border-color: var(--tag-sel);
+  color: var(--bg);
+}
+
+.section--dark .tag-btn {
+  border-color: #333;
+  color: #555;
+}
+
+.section--dark .tag-btn:hover {
+  border-color: var(--text-inv);
+  color: var(--text-inv);
+}
+
+.section--dark .tag-btn.active {
+  background: var(--text-inv);
+  border-color: var(--text-inv);
+  color: var(--bg-dark);
+}
+
+/* PHOTO UPLOAD */
+.photo-upload-area {
+  border: 1px dashed #333;
+  padding: 1.2rem;
+  cursor: pointer;
+  transition: border-color 0.3s;
+  position: relative;
+}
+
+.photo-upload-area:hover {
+  border-color: #555;
+}
+
+.photo-upload-prompt {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  color: #555;
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+}
+
+.upload-icon {
+  font-size: 1rem;
+  font-weight: 300;
+  width: 1.8rem;
+  height: 1.8rem;
+  border: 1px solid #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.photo-preview-img {
+  display: none;
+  max-width: 110px;
+  max-height: 150px;
+  object-fit: contain;
+  border: 1px solid #333;
+}
+
+.photo-preview-img.visible {
+  display: block;
+}
+
+.photo-remove {
+  display: none;
+  font-family: var(--mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.15em;
+  background: none;
+  border: 1px solid #333;
+  color: #555;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 0.5rem;
+}
+
+.photo-remove.visible {
+  display: inline-block;
+}
+
+.photo-remove:hover {
+  border-color: var(--text-inv);
+  color: var(--text-inv);
+}
+
+.photo-note {
+  font-size: 0.55rem;
+  font-weight: 300;
+  color: #444;
+  margin-top: 0.4rem;
+}
+
+.link-dark {
+  color: #666;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.link-dark:hover {
+  color: var(--text-inv);
+}
+
+/* SUBMIT BTN */
+.submit-btn {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  font-weight: 500;
+  padding: 0.9rem 2.2rem;
+  background: var(--text);
+  border: 1px solid var(--text);
+  color: var(--bg);
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 0.8rem;
+}
+
+.submit-btn:hover {
+  background: transparent;
+  color: var(--text);
+}
+
+.section--dark .submit-btn {
+  background: var(--text-inv);
+  border-color: var(--text-inv);
+  color: var(--bg-dark);
+}
+
+.section--dark .submit-btn:hover {
+  background: transparent;
+  color: var(--text-inv);
+}
+
+.submit-feedback {
+  font-size: 0.65rem;
+  margin-top: 0.8rem;
+  font-weight: 300;
+  min-height: 1.2em;
+}
+
+.submit-feedback.success { color: #666; }
+.submit-feedback.error { color: #996; }
+
+/* ARCHIVE STATS */
+.archive-stats {
+  display: flex;
+  gap: 2.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-num {
+  font-size: 1.8rem;
+  font-weight: 300;
+  letter-spacing: 0.05em;
+  line-height: 1;
+  margin-bottom: 0.3rem;
+}
+
+.stat-label {
+  font-size: 0.5rem;
+  letter-spacing: 0.2em;
+  color: var(--gray);
+  font-weight: 400;
+}
+
+/* EMOTIONAL PULSE */
+.emotional-pulse {
+  margin-bottom: 2rem;
+  padding: 1.2rem 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.pulse-label {
+  font-size: 0.5rem;
+  letter-spacing: 0.2em;
+  color: var(--gray);
+  margin-bottom: 0.6rem;
+  font-weight: 500;
+}
+
+.pulse-value {
+  font-size: 0.85rem;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.4rem;
+}
+
+.pulse-detail {
+  font-size: 0.65rem;
+  font-weight: 300;
+  color: var(--gray-mid);
+  line-height: 1.7;
+}
+
+/* FILTERS */
+.archive-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 2rem;
+}
+
+.filter-btn {
+  font-family: var(--mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.12em;
+  font-weight: 400;
+  padding: 0.35rem 0.6rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--gray);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+  background: var(--text);
+  border-color: var(--text);
+  color: var(--bg);
+}
+
+/* ARCHIVE GRID */
+.archive-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  margin-bottom: 3.5rem;
+}
+
+.archive-entry {
+  background: var(--bg);
+  padding: 1.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  transition: background 0.3s;
+  animation: fadeIn 0.4s ease both;
+}
+
+.archive-entry:hover {
+  background: var(--hover-lt);
+}
+
+.entry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.entry-store {
+  font-size: 0.55rem;
+  letter-spacing: 0.18em;
+  font-weight: 500;
+}
+
+.entry-amount {
+  font-size: 1rem;
+  font-weight: 300;
+}
+
+.entry-meta {
+  font-size: 0.55rem;
+  color: var(--gray);
+  font-weight: 300;
+}
+
+.entry-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.entry-tag {
+  font-size: 0.45rem;
+  letter-spacing: 0.15em;
+  padding: 0.15rem 0.4rem;
+  border: 1px solid var(--border);
+  color: var(--gray-mid);
+}
+
+.entry-note {
+  font-size: 0.65rem;
+  font-weight: 300;
+  color: var(--gray-mid);
+  line-height: 1.6;
+  border-top: 1px solid var(--border);
+  padding-top: 0.6rem;
+  margin-top: 0.15rem;
+}
+
+/* EMOTIONAL FREQUENCY */
+.archive-emotional-map {
+  padding-top: 1.5rem;
+}
+
+.archive-emotional-map h3 {
+  font-size: 0.55rem;
+  letter-spacing: 0.25em;
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+}
+
+.emotion-map-sub {
+  font-size: 0.6rem;
+  font-weight: 300;
+  color: var(--gray);
+  margin-bottom: 1.2rem;
+}
+
+.emotion-bar-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  gap: 0.6rem;
+}
+
+.emotion-bar-label {
+  font-size: 0.5rem;
+  letter-spacing: 0.12em;
+  width: 85px;
+  text-align: right;
+  color: var(--gray-mid);
+  flex-shrink: 0;
+}
+
+.emotion-bar-track {
+  flex: 1;
+  height: 6px;
+  background: var(--border);
+  position: relative;
+}
+
+.emotion-bar-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--text);
+  opacity: 0.3;
+  transition: width 0.6s ease;
+}
+
+.emotion-bar-count {
+  font-size: 0.5rem;
+  color: var(--gray);
+  width: 20px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.emotion-bar-pct {
+  font-size: 0.45rem;
+  color: var(--gray);
+  width: 32px;
+  flex-shrink: 0;
+}
+
+/* CO-OCCURRENCES */
+.emotion-co-occur {
+  margin-top: 2.5rem;
+}
+
+.emotion-co-occur h4 {
+  font-size: 0.5rem;
+  letter-spacing: 0.25em;
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+}
+
+.pair-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.pair-tags {
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  font-weight: 400;
+  min-width: 180px;
+}
+
+.pair-count {
+  font-size: 0.5rem;
+  color: var(--gray);
+}
+
+.pair-bar-track {
+  flex: 1;
+  height: 3px;
+  background: var(--border);
+  position: relative;
+}
+
+.pair-bar-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--text);
+  opacity: 0.2;
+  transition: width 0.6s ease;
+}
+
+/* SUSTAINABILITY */
+.sustain-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5rem;
+  margin-bottom: 3.5rem;
+}
+
+.sustain-block h3 {
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  font-weight: 500;
+  margin-bottom: 0.8rem;
+}
+
+.sustain-block p {
+  font-size: 0.75rem;
+  font-weight: 300;
+  line-height: 1.8;
+  color: #666;
+}
+
+.link-light {
+  color: var(--text-inv);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.link-light:hover {
+  color: #fff;
+}
+
+.sustain-role {
+  border-top: 1px solid #222;
+  padding-top: 2.5rem;
+}
+
+.sustain-role h3 {
+  font-size: 0.55rem;
+  letter-spacing: 0.25em;
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 1rem;
+}
+
+.role-title {
+  font-size: 1.2rem;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.4rem;
+  color: var(--text-inv);
+}
+
+.role-meaning {
+  font-size: 0.65rem;
+  font-weight: 300;
+  color: #555;
+  margin-bottom: 1.8rem;
+}
+
+.sustain-role > p:nth-of-type(3) {
+  font-size: 0.75rem;
+  font-weight: 300;
+  line-height: 1.85;
+  color: #666;
+  max-width: 680px;
+}
+
+.role-funding {
+  font-size: 0.75rem;
+  font-weight: 300;
+  line-height: 1.85;
+  color: #666;
+  max-width: 680px;
+  margin-top: 1.2rem;
+}
+
+/* FOOTER */
+.footer {
+  padding: 3.5rem 2rem;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.footer-inner {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.footer-title {
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+}
+
+.footer p {
+  font-size: 0.6rem;
+  font-weight: 300;
+  color: var(--gray-mid);
+  margin-bottom: 0.25rem;
+}
+
+.footer-small {
+  margin-top: 0.4rem !important;
+}
+
+.footer-credit {
+  margin-top: 1.8rem !important;
+  font-size: 0.55rem;
+  font-weight: 300;
+  color: var(--gray);
+  letter-spacing: 0.1em;
+}
+
+.link-footer {
+  color: var(--gray-mid);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.link-footer:hover {
+  color: var(--text);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  html { font-size: 13px; }
+  .hero-title { font-size: 2rem; }
+  .nav-links { gap: 0.8rem; }
+  .nav-links a { font-size: 0.5rem; }
+  .urgency-grid, .why-grid, .sustain-grid, .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .archive-grid { grid-template-columns: 1fr; }
+  .section { padding: 3.5rem 1.2rem; }
+  .hero { padding: 4.5rem 1.2rem 3rem; }
+  .pair-tags { min-width: 130px; }
+}
+
+@media (max-width: 480px) {
+  .nav-links { display: none; }
+  .hero-title { font-size: 1.5rem; }
+  .archive-stats { gap: 1.2rem; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* SEARCHABLE SELECT */
+.searchable-select {
+  position: relative;
+}
+
+.ss-input {
+  width: 100%;
+  cursor: text;
+}
+
+.ss-dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 220px;
+  overflow-y: auto;
+  background: var(--bg-dark);
+  border: 1px solid #333;
+  z-index: 50;
+}
+
+.ss-dropdown.open {
+  display: block;
+}
+
+.ss-group-label {
+  font-size: 0.45rem;
+  letter-spacing: 0.2em;
+  color: #555;
+  padding: 0.5rem 0.7rem 0.2rem;
+  font-weight: 500;
+}
+
+.ss-option {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  font-weight: 300;
+  padding: 0.4rem 0.7rem;
+  cursor: pointer;
+  color: var(--text-inv);
+  transition: background 0.15s;
+}
+
+.ss-option:hover {
+  background: var(--hover-dk);
+}
+
+.ss-option.selected {
+  background: #222;
+}
+
+.ss-no-results {
+  font-size: 0.6rem;
+  color: #555;
+  padding: 0.5rem 0.7rem;
+  font-weight: 300;
+}
+
+/* EMOTION ASSISTANT */
+.emotion-assist {
+  border-top: 1px solid #222;
+  padding-top: 1.8rem;
+}
+
+.emotion-assist-desc {
+  font-size: 0.6rem;
+  font-weight: 300;
+  color: #555;
+  margin-bottom: 0.8rem;
+  line-height: 1.6;
+}
+
+.emotion-assist-row {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+}
+
+.emotion-assist-row textarea {
+  flex: 1;
+}
+
+.emotion-assist-btn {
+  font-family: var(--mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.2em;
+  font-weight: 500;
+  padding: 0.6rem 1rem;
+  background: transparent;
+  border: 1px solid #333;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  margin-top: 1px;
+}
+
+.emotion-assist-btn:hover {
+  border-color: var(--text-inv);
+  color: var(--text-inv);
+}
+
+.emotion-assist-btn.loading {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.emotion-suggestions {
+  margin-top: 0.8rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.emotion-sug-btn {
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.12em;
+  font-weight: 400;
+  padding: 0.4rem 0.7rem;
+  background: transparent;
+  border: 1px dashed #444;
+  color: #888;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.emotion-sug-btn:hover {
+  border-color: var(--text-inv);
+  color: var(--text-inv);
+  border-style: solid;
+}
+
+.emotion-sug-btn.added {
+  background: var(--text-inv);
+  border-color: var(--text-inv);
+  color: var(--bg-dark);
+  border-style: solid;
+}
+
+.emotion-sug-note {
+  font-size: 0.5rem;
+  color: #555;
+  font-weight: 300;
+  width: 100%;
+}
+
+</style>
+</head>
+<body>
+
+  <canvas id="glyph-bg" aria-hidden="true"></canvas>
+
+  <nav id="nav">
+    <div class="nav-inner">
+      <a href="#top" class="nav-logo">R:EL</a>
+      <div class="nav-links">
+        <a href="#urgency">URGENCY</a>
+        <a href="#why">WHY</a>
+        <a href="#submit">SUBMIT</a>
+        <a href="#archive">ARCHIVE</a>
+        <a href="gallery.html">GALLERY</a>
+        <a href="#sustain">SUSTAIN</a>
+      </div>
+    </div>
+  </nav>
+
+  <section id="top" class="hero">
+    <div class="hero-content">
+      <h1 class="hero-title">RECEIPT AS EMOTIONAL LEDGER</h1>
+      <div class="hero-line"></div>
+      <p class="hero-sub">A civic infrastructure for transforming disposable consumer receipts into collective emotional and economic knowledge.</p>
+      <p class="hero-sub">This is not a product. This is a reassignment of function.</p>
+    </div>
+  </section>
+
+  <section id="urgency" class="section">
+    <div class="section-inner">
+      <div class="section-label">01 THE URGENCY</div>
+      <div class="divider-chars">+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +</div>
+      <div class="urgency-grid">
+        <div class="urgency-block">
+          <h3>THIS PROJECT ADDRESSES</h3>
+          <p>The normalization of financial stress. The privatization of survival decisions. The reduction of lived experience to transaction data. The erasure of emotional labor from economic record.</p>
+        </div>
+        <div class="urgency-block">
+          <h3>WHO SUSTAINS THIS ERASURE</h3>
+          <p>Retail and financial systems that quantify life as spending while discarding the human conditions of each transaction. Data extraction models built to serve corporate profit, not public understanding. Platforms that capture behavioral data and return nothing to the communities that generate it.</p>
+        </div>
+        <div class="urgency-block">
+          <h3>WHO IS AFFECTED</h3>
+          <p>Low and middle income consumers. Caregivers managing household budgets. Individuals navigating inflation privately. Anyone who has stood in a checkout line doing invisible math.</p>
+        </div>
+        <div class="urgency-block">
+          <h3>WHY PREVIOUS RESPONSES FAIL</h3>
+          <p>Budgeting tools individualize responsibility. Financial literacy campaigns moralize behavior. Corporate data remains inaccessible to communities. The emotional dimension of spending remains unrecorded.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="fields" class="section section--dark">
+    <div class="section-inner">
+      <div class="section-label">02 THE FIELDS WE CHALLENGE</div>
+      <div class="divider-chars divider-chars--light">· · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · ·</div>
+      <div class="fields-grid">
+        <div class="field-block"><div class="field-number">I</div><h3>RETAIL DATA ANALYTICS</h3><p>Consumer transaction data is captured, owned, and monetized by corporations. Receipts are designed to be discarded. The emotional conditions under which purchases are made, the stress, the sacrifice, the care, are systematically excluded from the data. This project reclaims that data as public knowledge.</p></div>
+        <div class="field-block"><div class="field-number">II</div><h3>CONSUMER FINANCE</h3><p>Financial systems reduce human economic life to credit scores, spending categories, and risk profiles. The lived experience of managing a household budget under inflationary pressure is invisible to these systems. This project makes survival spending visible before it becomes debt, before it enters the extractive financial pipeline.</p></div>
+        <div class="field-block"><div class="field-number">III</div><h3>THE EMOTIONAL LABOR ECONOMY</h3><p>The labor of deciding what to buy, what to forgo, how to stretch a budget, who eats and who waits, is performed overwhelmingly by women and caregivers. It is uncompensated, unrecorded, and unrecognized. This project creates a record of that labor as civic evidence.</p></div>
+      </div>
+      <div class="field-statement"><p>THE RECEIPT REMAINS THE SAME OBJECT.<br>ITS FUNCTION CHANGES.<br>FROM CORPORATE ACCOUNTING TOOL<br>TO CIVIC EMOTIONAL ARCHIVE.<br><br>THAT REASSIGNMENT OF FUNCTION<br>IS THE ARTE ÚTIL ACT.</p></div>
+    </div>
+  </section>
+
+  <section id="why" class="section">
+    <div class="section-inner">
+      <div class="section-label">03 WHY CONTRIBUTE</div>
+      <div class="divider-chars">+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +</div>
+      <div class="why-intro"><p>A receipt alone is disposable evidence of a private transaction. Submitted and emotionally tagged, it becomes part of a collective record.</p></div>
+      <div class="why-grid">
+        <div class="why-block"><div class="why-num">01</div><h3>FROM PRIVATE STRESS TO SHARED EVIDENCE</h3><p>Your financial struggle is not individual failure. It is structural condition. When your receipt enters the archive alongside hundreds of others, the pattern becomes undeniable. What felt like personal shame becomes collective truth.</p></div>
+        <div class="why-block"><div class="why-num">02</div><h3>DATA THAT SERVES COMMUNITIES</h3><p>The archive produces a public dataset that mutual aid organizations, food policy councils, and researchers can use to advocate for material change: price controls, food access policy, wage demands. Your receipt becomes evidence in an argument for your own wellbeing.</p></div>
+        <div class="why-block"><div class="why-num">03</div><h3>AN EMOTIONAL COUNTER-RECORD</h3><p>Corporate data deliberately strips out the feelings attached to spending: the guilt of choosing between medicine and groceries, the care embedded in packing school lunches, the relief of finally filling a cart. This archive restores those feelings as legitimate, legible, and public.</p></div>
+        <div class="why-block"><div class="why-num">04</div><h3>SOLIDARITY THROUGH VISIBILITY</h3><p>The archive does not just collect. It connects. Every submission is a recognition that economic life is shared life. What you contribute here is not data for extraction. It is evidence for solidarity.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="submit" class="section section--dark">
+    <div class="section-inner">
+      <div class="section-label">04 SUBMIT A RECEIPT</div>
+      <div class="divider-chars divider-chars--light">· · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · ·</div>
+      <p class="submit-intro">Your submission is anonymous. No account required. No data sold. Your receipt becomes part of a collective public record of economic and emotional life.</p>
+      
+      <div class="form-container" id="form-container">
+        <div class="form-grid">
+          <!-- STORE TYPE — searchable -->
+          <div class="form-group">
+            <label>STORE TYPE</label>
+            <div class="searchable-select" id="store-select">
+              <input type="text" class="ss-input" placeholder="TYPE TO SEARCH..." autocomplete="off">
+              <div class="ss-dropdown"></div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="total">TOTAL AMOUNT</label>
+            <input type="number" id="total" placeholder="0.00" step="0.01" min="0">
+          </div>
+          
+          <div class="form-group">
+            <label for="items-count">NUMBER OF ITEMS</label>
+            <input type="number" id="items-count" placeholder="0" min="0">
+          </div>
+
+          <!-- REGION — searchable -->
+          <div class="form-group">
+            <label>REGION</label>
+            <div class="searchable-select" id="region-select">
+              <input type="text" class="ss-input" placeholder="TYPE TO SEARCH..." autocomplete="off">
+              <div class="ss-dropdown"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- EMOTIONAL TAGS -->
+        <div class="form-group form-group--full">
+          <label>EMOTIONAL TAGS <span class="label-hint">(SELECT ALL THAT APPLY)</span></label>
+          <p class="tags-intro">Select the emotions closest to what you felt. If none of these fit, describe your experience below and R:EL AI will help you find the right words.</p>
+          <div class="tags-grid" id="tags-grid"></div>
+        </div>
+
+        <!-- AI EMOTION ASSISTANT -->
+        <div class="form-group form-group--full emotion-assist">
+          <label>EXPAND YOUR EMOTIONS WITH R:EL AI <span class="label-hint">(OPTIONAL)</span></label>
+          <p class="emotion-assist-desc">Sometimes the right word is not in the list. Describe what you were feeling in your own words and R:EL AI will suggest more specific emotional tags. R:EL AI is trained to recognize the emotions that economic systems erase: the stress of survival spending, the care embedded in feeding a family, the grief of watching prices rise.</p>
+          <div class="emotion-assist-row">
+            <textarea id="emotion-input" rows="2" maxlength="300" placeholder="Describe what you felt at checkout..."></textarea>
+            <button class="emotion-assist-btn" id="emotion-assist-btn">SUGGEST</button>
+          </div>
+          <div class="emotion-suggestions" id="emotion-suggestions"></div>
+        </div>
+
+        <div class="form-group form-group--full">
+          <label for="note">NOTE <span class="label-hint">(OPTIONAL, 200 CHAR MAX)</span></label>
+          <textarea id="note" maxlength="200" rows="3" placeholder="What were you thinking about at checkout? e.g. I had to choose between my kid's vitamins and my own lunch"></textarea>
+        </div>
+
+        <div class="form-group form-group--full">
+          <label>RECEIPT PHOTO <span class="label-hint">(OPTIONAL)</span></label>
+          <div class="photo-upload-area" id="photo-upload-area">
+            <input type="file" id="receipt-photo" accept="image/*" capture="environment" hidden>
+            <div class="photo-upload-prompt" id="photo-upload-prompt">
+              <span class="upload-icon">+</span>
+              <span>TAP TO PHOTOGRAPH OR UPLOAD RECEIPT</span>
+            </div>
+            <img id="photo-preview-img" class="photo-preview-img" alt="">
+            <button class="photo-remove" id="photo-remove">REMOVE</button>
+          </div>
+          <p class="photo-note">Photos appear in the public <a href="gallery.html" class="link-dark">Receipt Gallery</a>.</p>
+        </div>
+
+        <button class="submit-btn" id="submit-btn">SUBMIT TO ARCHIVE</button>
+        <div class="submit-feedback" id="submit-feedback"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="archive" class="section">
+    <div class="section-inner">
+      <div class="section-label">05 THE ARCHIVE</div>
+      <div class="divider-chars">+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +</div>
+      <div class="archive-stats" id="archive-stats"></div>
+      <div class="emotional-pulse" id="emotional-pulse"></div>
+      <div class="archive-filter" id="archive-filter"></div>
+      <div class="archive-grid" id="archive-grid"></div>
+      <div class="archive-emotional-map">
+        <h3>EMOTIONAL FREQUENCY</h3>
+        <p class="emotion-map-sub">Distribution of all emotional tags across archived receipts. This includes both preset tags and R:EL AI-generated tags contributed by users, meaning the emotional vocabulary of the archive grows with each submission.</p>
+        <div id="emotion-bars"></div>
+        <div class="emotion-co-occur">
+          <h4>CO-OCCURRENCES</h4>
+          <p class="emotion-map-sub">Emotions most frequently tagged together on the same receipt.</p>
+          <div id="emotion-pairs"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="sustain" class="section section--dark">
+    <div class="section-inner">
+      <div class="section-label">06 SUSTAINABILITY + GOVERNANCE</div>
+      <div class="divider-chars divider-chars--light">· · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · ·</div>
+      <div class="sustain-grid">
+        <div class="sustain-block"><h3>OPEN SOURCE</h3><p>All code is publicly available on <a href="https://github.com/jess-vera/r-el" class="link-light" target="_blank" rel="noopener">GitHub</a>. The platform can be forked, adapted, and deployed by any community. No proprietary tools, no locked infrastructure. Open source means this project cannot be enclosed, captured, or privatized. Anyone can run their own version of this archive.</p></div>
+        <div class="sustain-block"><h3>COMMUNITY GOVERNANCE</h3><p>The emotional tagging taxonomy, data access policies, and reporting priorities are governed by community input, not a single author. The initiator builds the infrastructure. The users shape its function.</p></div>
+        <div class="sustain-block"><h3>INSTITUTIONAL PARTNERSHIPS</h3><p>Designed for adoption by mutual aid organizations, food policy councils, public health researchers, and community land trusts. The data serves those who need it, not those who profit from it.</p></div>
+        <div class="sustain-block"><h3>DATA ETHICS</h3><p>All submissions are anonymous. No accounts, no tracking, no behavioral profiling. Data belongs to the public. The archive practices the opposite of what it critiques.</p></div>
+      </div>
+      <div class="sustain-role">
+        <h3>PROFESSIONAL ROLE</h3>
+        <p class="role-title">ANTI-EXTRACTIVE ARCHIVIST</p>
+        <p class="role-meaning">(Anti-profit extraction. Anti-privatized ownership of lived economic traces.)</p>
+        <p>Someone has to maintain the infrastructure of collective knowledge that corporations refuse to build and governments fail to fund. The Anti-Extractive Archivist is that role: part community librarian, part data steward, part civic technologist. The archivist manages the anonymous submission platform, ensures ethical data storage, maintains the emotional tagging taxonomy, produces periodic public reports on consumption patterns, identifies indicators of economic stress, develops public facing dashboards, and coordinates with researchers and community organizations.</p>
+        <p class="role-funding">Open source makes this role possible by eliminating proprietary gatekeeping. The tools are public. The labor of maintaining, curating, and reporting is the work. This role can be sustained through community grants, mutual aid networks, institutional partnerships, or artist residencies. It is funded by the same communities it serves.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-content">
+        <p class="footer-title">RECEIPT AS EMOTIONAL LEDGER</p>
+        <p class="footer-small">The receipt remains the same object. Its function changes.</p>
+        <p class="footer-credit">An Arte Útil project by Jess Adriana Rivera. 2026.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+/* ============================================
+   RECEIPT AS EMOTIONAL LEDGER — APP LOGIC
+   ============================================ */
+
+// ---- CONFIG ----
+const API_KEY = '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';
+
+// ---- STORE TYPES (global) ----
+const STORE_TYPES = [
+  { group: 'FOOD + GROCERY', items: [
+    { v: 'grocery', l: 'GROCERY / SUPERMARKET' },
+    { v: 'hypermarket', l: 'HYPERMARKET' },
+    { v: 'market', l: 'OPEN-AIR MARKET / BAZAAR' },
+    { v: 'butcher', l: 'BUTCHER / FISHMONGER' },
+    { v: 'bakery', l: 'BAKERY' },
+    { v: 'greengrocer', l: 'GREENGROCER / PRODUCE STAND' },
+    { v: 'deli', l: 'DELI / PREPARED FOOD' },
+    { v: 'kirana', l: 'KIRANA / CORNER SHOP' },
+    { v: 'bodega', l: 'BODEGA / TIENDA' },
+    { v: 'food-coop', l: 'FOOD CO-OP' }
+  ]},
+  { group: 'CONVENIENCE + GAS', items: [
+    { v: 'convenience', l: 'CONVENIENCE STORE' },
+    { v: 'gas', l: 'GAS / PETROL STATION' },
+    { v: 'kiosk', l: 'KIOSK / NEWSSTAND' }
+  ]},
+  { group: 'DISCOUNT + VALUE', items: [
+    { v: 'discount', l: 'DISCOUNT / DOLLAR STORE' },
+    { v: 'warehouse', l: 'WAREHOUSE CLUB' },
+    { v: 'outlet', l: 'OUTLET STORE' },
+    { v: 'thrift', l: 'THRIFT / SECONDHAND' },
+    { v: 'liquidation', l: 'LIQUIDATION / CLEARANCE' }
+  ]},
+  { group: 'HEALTH + PHARMACY', items: [
+    { v: 'pharmacy', l: 'PHARMACY / DRUGSTORE' },
+    { v: 'health-food', l: 'HEALTH FOOD / SUPPLEMENT' },
+    { v: 'herbal', l: 'HERBAL / TRADITIONAL MEDICINE' },
+    { v: 'optical', l: 'OPTICAL' }
+  ]},
+  { group: 'HOUSEHOLD + HARDWARE', items: [
+    { v: 'hardware', l: 'HARDWARE STORE' },
+    { v: 'home-goods', l: 'HOME GOODS / HOUSEWARES' },
+    { v: 'furniture', l: 'FURNITURE' },
+    { v: 'garden', l: 'GARDEN CENTER / NURSERY' }
+  ]},
+  { group: 'CLOTHING + PERSONAL', items: [
+    { v: 'clothing', l: 'CLOTHING / APPAREL' },
+    { v: 'shoes', l: 'SHOE STORE' },
+    { v: 'beauty', l: 'BEAUTY / COSMETICS' },
+    { v: 'laundry', l: 'LAUNDROMAT / DRY CLEANER' }
+  ]},
+  { group: 'DEPARTMENT + GENERAL', items: [
+    { v: 'department', l: 'DEPARTMENT STORE' },
+    { v: 'general', l: 'GENERAL STORE' },
+    { v: 'variety', l: 'VARIETY STORE' }
+  ]},
+  { group: 'SPECIALTY', items: [
+    { v: 'electronics', l: 'ELECTRONICS' },
+    { v: 'bookstore', l: 'BOOKSTORE / STATIONERY' },
+    { v: 'pet', l: 'PET SUPPLY' },
+    { v: 'auto', l: 'AUTO PARTS' },
+    { v: 'sporting', l: 'SPORTING GOODS' },
+    { v: 'toy', l: 'TOY STORE' },
+    { v: 'craft', l: 'CRAFT / ART SUPPLY' }
+  ]},
+  { group: 'FOOD SERVICE', items: [
+    { v: 'restaurant', l: 'RESTAURANT / TAKEAWAY' },
+    { v: 'cafe', l: 'CAFE / COFFEE SHOP' },
+    { v: 'street-food', l: 'STREET FOOD / HAWKER' },
+    { v: 'fast-food', l: 'FAST FOOD' }
+  ]},
+  { group: 'SERVICES', items: [
+    { v: 'medical', l: 'MEDICAL / CLINIC' },
+    { v: 'childcare', l: 'CHILDCARE' },
+    { v: 'transport', l: 'TRANSPORT / TRANSIT' },
+    { v: 'utility', l: 'UTILITY PAYMENT' },
+    { v: 'telecom', l: 'TELECOM / MOBILE TOP-UP' }
+  ]},
+  { group: 'OTHER', items: [
+    { v: 'online', l: 'ONLINE / E-COMMERCE' },
+    { v: 'vending', l: 'VENDING MACHINE' },
+    { v: 'other', l: 'OTHER' }
+  ]}
+];
+
+// ---- REGIONS (UN Geoscheme) ----
+const REGIONS = [
+  { group: 'AFRICA', items: [
+    { v: 'af-north', l: 'NORTHERN AFRICA' },
+    { v: 'af-east', l: 'EASTERN AFRICA' },
+    { v: 'af-middle', l: 'MIDDLE AFRICA' },
+    { v: 'af-south', l: 'SOUTHERN AFRICA' },
+    { v: 'af-west', l: 'WESTERN AFRICA' }
+  ]},
+  { group: 'AMERICAS', items: [
+    { v: 'am-caribbean', l: 'CARIBBEAN' },
+    { v: 'am-central', l: 'CENTRAL AMERICA' },
+    { v: 'am-south', l: 'SOUTH AMERICA' },
+    { v: 'am-north', l: 'NORTHERN AMERICA' }
+  ]},
+  { group: 'ASIA', items: [
+    { v: 'as-central', l: 'CENTRAL ASIA' },
+    { v: 'as-east', l: 'EASTERN ASIA' },
+    { v: 'as-southeast', l: 'SOUTH-EASTERN ASIA' },
+    { v: 'as-south', l: 'SOUTHERN ASIA' },
+    { v: 'as-west', l: 'WESTERN ASIA' }
+  ]},
+  { group: 'EUROPE', items: [
+    { v: 'eu-east', l: 'EASTERN EUROPE' },
+    { v: 'eu-north', l: 'NORTHERN EUROPE' },
+    { v: 'eu-south', l: 'SOUTHERN EUROPE' },
+    { v: 'eu-west', l: 'WESTERN EUROPE' }
+  ]},
+  { group: 'OCEANIA', items: [
+    { v: 'oc-aunz', l: 'AUSTRALIA + NEW ZEALAND' },
+    { v: 'oc-melanesia', l: 'MELANESIA' },
+    { v: 'oc-micronesia', l: 'MICRONESIA' },
+    { v: 'oc-polynesia', l: 'POLYNESIA' }
+  ]}
+];
+
+// ---- EMOTIONAL TAGS ----
+const BASE_EMOTIONS = [
+  'necessity','survival','care','sacrifice','guilt','relief',
+  'stress','joy','grief','scarcity','shame','abundance',
+  'exhaustion','hope'
+];
+
+// ---- SEED DATA ----
+const SEED_DATA = [
+  { id:'s1', storeType:'grocery', total:67.43, items:14, region:'am-north', tags:['necessity','stress'], note:'Everything costs more than last month. I put back the berries.', date:'2026-03-02' },
+  { id:'s2', storeType:'pharmacy', total:124.89, items:3, region:'am-north', tags:['survival','guilt'], note:'Insurance did not cover it. Three months of this.', date:'2026-03-04' },
+  { id:'s3', storeType:'grocery', total:23.17, items:8, region:'am-north', tags:['care','sacrifice'], note:'Packed lunch ingredients for the kids. Skipped mine.', date:'2026-03-05' },
+  { id:'s4', storeType:'discount', total:41.02, items:11, region:'am-north', tags:['necessity','scarcity'], note:'', date:'2026-03-06' },
+  { id:'s5', storeType:'grocery', total:189.34, items:32, region:'am-north', tags:['care','joy'], note:'First time in months I could fill the cart.', date:'2026-03-01' },
+  { id:'s6', storeType:'gas', total:58.00, items:1, region:'am-north', tags:['necessity','stress'], note:'Full tank so I can make it to both jobs this week.', date:'2026-03-03' },
+  { id:'s7', storeType:'grocery', total:34.76, items:9, region:'am-north', tags:['survival','shame'], note:'Used coupons for everything. The cashier was kind.', date:'2026-03-07' },
+  { id:'s8', storeType:'warehouse', total:312.45, items:18, region:'am-north', tags:['care','relief'], note:'Split the membership with my neighbor. We share the bulk items.', date:'2026-02-28' },
+  { id:'s9', storeType:'convenience', total:11.49, items:3, region:'am-north', tags:['guilt','necessity'], note:'Forgot lunch. This was the only option near work.', date:'2026-03-06' },
+  { id:'s10', storeType:'grocery', total:52.83, items:12, region:'eu-west', tags:['stress','scarcity','grief'], note:'Prices up again. My mother used to cook this for less than half.', date:'2026-03-08' },
+  { id:'s11', storeType:'pharmacy', total:8.99, items:1, region:'am-north', tags:['survival'], note:'', date:'2026-03-07' },
+  { id:'s12', storeType:'grocery', total:97.21, items:22, region:'am-north', tags:['abundance','joy','relief'], note:'Tax return came. I bought real cheese.', date:'2026-03-04' }
+];
+
+// ---- STATE ----
+const STORAGE_KEY = 'rel_archive';
+const GALLERY_KEY = 'rel_gallery';
+let entries = [];
+let activeFilter = 'all';
+let selectedTags = new Set();
+let pendingPhoto = null;
+let storeValue = '';
+let regionValue = '';
+
+// ---- INIT ----
+document.addEventListener('DOMContentLoaded', () => {
+  initGlyphCanvas();
+  loadEntries();
+  renderTagButtons();
+  initSearchableSelect('store-select', STORE_TYPES, v => storeValue = v);
+  initSearchableSelect('region-select', REGIONS, v => regionValue = v);
+  renderArchive();
+  renderStats();
+  renderEmotionalPulse();
+  renderFilters();
+  renderEmotionBars();
+  renderCoOccurrences();
+  bindForm();
+  bindTags();
+  bindPhotoUpload();
+  bindEmotionAssist();
+});
+
+// ---- GLYPH CANVAS ----
+function initGlyphCanvas() {
+  const c = document.getElementById('glyph-bg');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  function resize() { c.width = window.innerWidth; c.height = document.documentElement.scrollHeight; draw(); }
+  function draw() {
+    ctx.clearRect(0, 0, c.width, c.height);
+    ctx.font = '10px IBM Plex Mono,monospace'; ctx.fillStyle = '#2A2A28';
+    const ch = '6699EEEE6699EE00669966EE9966EE00', cW = 9, cH = 13;
+    const cols = Math.ceil(c.width / cW), rows = Math.ceil(c.height / cH);
+    for (let r = 0; r < rows; r++) for (let cl = 0; cl < cols; cl++) {
+      const nx = cl/cols, ny = r/rows, dist = Math.sqrt((nx-.5)**2+(ny-.35)**2);
+      const dn = Math.sin(ny*12)*.3+.5+Math.cos(nx*8+ny*3)*.2-(dist<.08?.8:0);
+      if (((cl*7+r*13+cl*r)%97)/97 < dn*.6)
+        ctx.fillText(ch[(cl*3+r*7)%ch.length], cl*cW, r*cH);
+    }
+  }
+  resize();
+  window.addEventListener('resize', () => { clearTimeout(window._gr); window._gr = setTimeout(resize, 200); });
+  new MutationObserver(() => { const h = document.documentElement.scrollHeight; if (Math.abs(c.height-h)>100){c.height=h;draw()} }).observe(document.body,{childList:true,subtree:true});
+}
+
+// ---- SEARCHABLE SELECT ----
+function initSearchableSelect(id, data, onSelect) {
+  const container = document.getElementById(id);
+  const input = container.querySelector('.ss-input');
+  const dropdown = container.querySelector('.ss-dropdown');
+  let allItems = [];
+  data.forEach(g => g.items.forEach(it => allItems.push({ ...it, group: g.group })));
+
+  function render(filter) {
+    const q = (filter || '').toUpperCase();
+    let html = '';
+    data.forEach(g => {
+      const matches = g.items.filter(it => !q || it.l.includes(q) || g.group.includes(q));
+      if (matches.length === 0) return;
+      html += `<div class="ss-group-label">${g.group}</div>`;
+      matches.forEach(it => {
+        html += `<div class="ss-option" data-value="${it.v}">${it.l}</div>`;
+      });
+    });
+    if (!html) html = '<div class="ss-no-results">NO MATCHES</div>';
+    dropdown.innerHTML = html;
+    dropdown.querySelectorAll('.ss-option').forEach(opt => {
+      opt.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        input.value = opt.textContent;
+        onSelect(opt.dataset.value);
+        dropdown.classList.remove('open');
+      });
+    });
+  }
+
+  input.addEventListener('focus', () => { render(input.value); dropdown.classList.add('open'); });
+  input.addEventListener('input', () => { render(input.value); dropdown.classList.add('open'); });
+  input.addEventListener('blur', () => { setTimeout(() => dropdown.classList.remove('open'), 150); });
+
+  render('');
+}
+
+// ---- TAG BUTTONS ----
+function renderTagButtons() {
+  const grid = document.getElementById('tags-grid');
+  grid.innerHTML = BASE_EMOTIONS.map(t =>
+    `<button class="tag-btn" data-tag="${t}">${t.toUpperCase()}</button>`
+  ).join('');
+}
+
+function bindTags() {
+  document.getElementById('tags-grid').addEventListener('click', (e) => {
+    const btn = e.target.closest('.tag-btn');
+    if (!btn) return;
+    const t = btn.dataset.tag;
+    if (selectedTags.has(t)) { selectedTags.delete(t); btn.classList.remove('active'); }
+    else { selectedTags.add(t); btn.classList.add('active'); }
+  });
+}
+
+function addTag(tag) {
+  const normalized = tag.toLowerCase().replace(/[^a-z]/g, '');
+  if (!normalized) return;
+  selectedTags.add(normalized);
+  // Ensure button exists
+  const grid = document.getElementById('tags-grid');
+  let btn = grid.querySelector(`[data-tag="${normalized}"]`);
+  if (!btn) {
+    btn = document.createElement('button');
+    btn.className = 'tag-btn active';
+    btn.dataset.tag = normalized;
+    btn.textContent = normalized.toUpperCase();
+    grid.appendChild(btn);
+  } else {
+    btn.classList.add('active');
+  }
+}
+
+// ---- AI EMOTION ASSISTANT ----
+function bindEmotionAssist() {
+  document.getElementById('emotion-assist-btn').addEventListener('click', handleEmotionAssist);
+}
+
+async function handleEmotionAssist() {
+  const input = document.getElementById('emotion-input');
+  const btn = document.getElementById('emotion-assist-btn');
+  const container = document.getElementById('emotion-suggestions');
+  const text = input.value.trim();
+  if (!text) return;
+
+  btn.classList.add('loading');
+  btn.textContent = '...';
+  container.innerHTML = '';
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 200,
+        system: 'You are R:EL AI, the emotional vocabulary assistant for Receipt as Emotional Ledger, an anti-extractive civic archive. This project transforms disposable consumer receipts into collective emotional and economic knowledge. It challenges retail data analytics, consumer finance, and the emotional labor economy by making the invisible feelings attached to spending visible, public, and shared. Your role is to help contributors name emotions that corporate data systems deliberately erase: the stress of survival spending, the care embedded in feeding a family, the grief of watching prices rise, the shame systems impose on those who struggle. Given a description of what someone felt while shopping or at checkout, suggest 4-6 single-word emotional tags that are specific, honest, and structurally aware. Prefer words that name economic and caregiving emotions over clinical or therapeutic language. Return ONLY a JSON array of lowercase single words. No explanation. Example: ["sacrifice","exhaustion","devotion","scarcity","tenderness"]',
+        messages: [{ role: 'user', content: text }]
+      })
+    });
+    const data = await resp.json();
+    const raw = data.content[0].text.trim();
+    const tags = JSON.parse(raw);
+
+    container.innerHTML = tags.map(t =>
+      `<button class="emotion-sug-btn" data-tag="${t}">${t.toUpperCase()}</button>`
+    ).join('') + '<span class="emotion-sug-note">R:EL AI SUGGESTIONS — TAP TO ADD TO YOUR TAGS</span>';
+
+    container.querySelectorAll('.emotion-sug-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        addTag(b.dataset.tag);
+        b.classList.add('added');
+      });
+    });
+  } catch (e) {
+    container.innerHTML = '<span class="emotion-sug-note">COULD NOT REACH R:EL AI. SELECT TAGS MANUALLY.</span>';
+  }
+
+  btn.classList.remove('loading');
+  btn.textContent = 'SUGGEST';
+}
+
+// ---- DATA ----
+function loadEntries() {
+  try { const s = localStorage.getItem(STORAGE_KEY); entries = [...SEED_DATA, ...(s?JSON.parse(s):[])]; }
+  catch(e) { entries = [...SEED_DATA]; }
+}
+function saveEntry(entry) {
+  try { const s = localStorage.getItem(STORAGE_KEY); const a = s?JSON.parse(s):[]; a.push(entry); localStorage.setItem(STORAGE_KEY,JSON.stringify(a)); } catch(e){}
+  entries.push(entry);
+}
+function saveGalleryPhoto(d) {
+  try { const s = localStorage.getItem(GALLERY_KEY); const a = s?JSON.parse(s):[]; a.push(d); localStorage.setItem(GALLERY_KEY,JSON.stringify(a)); } catch(e){}
+}
+
+// ---- PHOTO ----
+function bindPhotoUpload() {
+  const area = document.getElementById('photo-upload-area');
+  const input = document.getElementById('receipt-photo');
+  const prompt = document.getElementById('photo-upload-prompt');
+  const img = document.getElementById('photo-preview-img');
+  const rm = document.getElementById('photo-remove');
+  if (!area) return;
+  area.addEventListener('click', e => { if (e.target===rm||e.target.closest('.photo-remove'))return; if(!img.classList.contains('visible'))input.click(); });
+  input.addEventListener('change', e => {
+    const f = e.target.files[0]; if(!f)return;
+    const r = new FileReader();
+    r.onload = ev => resizeImage(ev.target.result, 600, res => { pendingPhoto=res; img.src=res; img.classList.add('visible'); rm.classList.add('visible'); prompt.style.display='none'; });
+    r.readAsDataURL(f);
+  });
+  rm.addEventListener('click', e => { e.stopPropagation(); pendingPhoto=null; input.value=''; img.classList.remove('visible'); img.removeAttribute('src'); rm.classList.remove('visible'); prompt.style.display=''; });
+}
+function resizeImage(u,mW,cb) { const i=new Image(); i.onload=()=>{const s=Math.min(1,mW/i.width);const c=document.createElement('canvas');c.width=i.width*s;c.height=i.height*s;c.getContext('2d').drawImage(i,0,0,c.width,c.height);cb(c.toDataURL('image/jpeg',0.7))}; i.src=u; }
+
+// ---- FORM ----
+function bindForm() { document.getElementById('submit-btn').addEventListener('click', handleSubmit); }
+
+function handleSubmit() {
+  if (!storeValue) { showFeedback('SELECT A STORE TYPE.','error'); return; }
+  const total = parseFloat(document.getElementById('total').value);
+  if (isNaN(total)||total<=0) { showFeedback('ENTER A VALID TOTAL AMOUNT.','error'); return; }
+  if (selectedTags.size===0) { showFeedback('SELECT AT LEAST ONE EMOTIONAL TAG.','error'); return; }
+  const items = parseInt(document.getElementById('items-count').value)||0;
+  const note = document.getElementById('note').value.trim();
+
+  const entry = { id:'u'+Date.now(), storeType:storeValue, total, items, region:regionValue, tags:Array.from(selectedTags), note, date:new Date().toISOString().split('T')[0] };
+  saveEntry(entry);
+  if (pendingPhoto) saveGalleryPhoto({ id:'p'+Date.now(), image:pendingPhoto, date:entry.date, timestamp:new Date().toISOString() });
+  showFeedback('SUBMITTED. YOUR RECEIPT IS NOW PART OF THE ARCHIVE.','success');
+  resetForm();
+  renderArchive(); renderStats(); renderEmotionalPulse(); renderFilters(); renderEmotionBars(); renderCoOccurrences();
+  setTimeout(()=>document.getElementById('archive').scrollIntoView({behavior:'smooth'}),800);
+}
+
+function showFeedback(m,t) { const e=document.getElementById('submit-feedback'); e.textContent=m; e.className='submit-feedback '+t; if(t==='success')setTimeout(()=>{e.textContent='';e.className='submit-feedback'},4000); }
+
+function resetForm() {
+  storeValue=''; regionValue='';
+  document.querySelectorAll('.ss-input').forEach(i=>i.value='');
+  document.getElementById('total').value='';
+  document.getElementById('items-count').value='';
+  document.getElementById('note').value='';
+  document.getElementById('emotion-input').value='';
+  document.getElementById('emotion-suggestions').innerHTML='';
+  selectedTags.clear();
+  document.querySelectorAll('#tags-grid .tag-btn').forEach(b=>b.classList.remove('active'));
+  pendingPhoto=null;
+  const fi=document.getElementById('receipt-photo'); if(fi)fi.value='';
+  const img=document.getElementById('photo-preview-img'),rm=document.getElementById('photo-remove'),pr=document.getElementById('photo-upload-prompt');
+  if(img){img.classList.remove('visible');img.removeAttribute('src')} if(rm)rm.classList.remove('visible'); if(pr)pr.style.display='';
+}
+
+// ---- FILTERS ----
+function renderFilters() {
+  const el = document.getElementById('archive-filter');
+  const allTags = new Set(); entries.forEach(e=>e.tags.forEach(t=>allTags.add(t)));
+  const sorted = [...allTags].sort();
+  el.innerHTML = `<button class="filter-btn${activeFilter==='all'?' active':''}" data-filter="all">ALL</button>` +
+    sorted.map(t=>`<button class="filter-btn${activeFilter===t?' active':''}" data-filter="${t}">${t.toUpperCase()}</button>`).join('');
+  el.querySelectorAll('.filter-btn').forEach(b=>b.addEventListener('click',()=>{
+    el.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active'); activeFilter=b.dataset.filter; renderArchive();
+  }));
+}
+
+// ---- ARCHIVE ----
+function renderArchive() {
+  const grid = document.getElementById('archive-grid');
+  let f = activeFilter==='all'?entries:entries.filter(e=>e.tags.includes(activeFilter));
+  f.sort((a,b)=>b.date.localeCompare(a.date));
+  grid.innerHTML = f.map((e,i)=>`
+    <div class="archive-entry" style="animation-delay:${i*.04}s">
+      <div class="entry-header"><span class="entry-store">${fmtStore(e.storeType)}</span><span class="entry-amount">$${e.total.toFixed(2)}</span></div>
+      <div class="entry-meta">${fmtDate(e.date)}${e.items?' · '+e.items+' items':''}${e.region?' · '+fmtRegion(e.region):''}</div>
+      <div class="entry-tags">${e.tags.map(t=>`<span class="entry-tag">${t.toUpperCase()}</span>`).join('')}</div>
+      ${e.note?`<div class="entry-note">"${e.note}"</div>`:''}
+    </div>`).join('');
+}
+
+// ---- STATS ----
+function renderStats() {
+  const el = document.getElementById('archive-stats');
+  const n=entries.length, tot=entries.reduce((s,e)=>s+e.total,0), avg=n?tot/n:0;
+  const regions=new Set(entries.map(e=>e.region).filter(Boolean)).size;
+  const emotions=new Set(entries.flatMap(e=>e.tags)).size;
+  el.innerHTML = `<div class="stat"><span class="stat-num">${n}</span><span class="stat-label">RECEIPTS</span></div>
+    <div class="stat"><span class="stat-num">$${tot.toFixed(0)}</span><span class="stat-label">TOTAL RECORDED</span></div>
+    <div class="stat"><span class="stat-num">$${avg.toFixed(0)}</span><span class="stat-label">AVG PER RECEIPT</span></div>
+    <div class="stat"><span class="stat-num">${regions}</span><span class="stat-label">REGIONS</span></div>
+    <div class="stat"><span class="stat-num">${emotions}</span><span class="stat-label">EMOTIONS TRACKED</span></div>`;
+}
+
+// ---- EMOTIONAL PULSE ----
+function renderEmotionalPulse() {
+  const el = document.getElementById('emotional-pulse');
+  const counts = {}; entries.forEach(e=>e.tags.forEach(t=>counts[t]=(counts[t]||0)+1));
+  const top = Object.entries(counts).sort((a,b)=>b[1]-a[1])[0];
+  if (!top) { el.innerHTML=''; return; }
+  const topPct = ((top[1]/entries.length)*100).toFixed(0);
+  const distress=['stress','guilt','grief','shame','scarcity','survival','exhaustion','resentment','anxiety','desperation','frustration','numbness','inadequacy','dread','rage'];
+  const sustaining=['care','joy','relief','abundance','tenderness','pride','gratitude','hope','solidarity','dignity','devotion'];
+  let dC=0,sC=0;
+  entries.forEach(e=>e.tags.forEach(t=>{if(distress.includes(t))dC++;if(sustaining.includes(t))sC++}));
+  const tot=dC+sC, dP=tot?((dC/tot)*100).toFixed(0):0, sP=tot?((sC/tot)*100).toFixed(0):0;
+  el.innerHTML = `<div class="pulse-label">COLLECTIVE EMOTIONAL STATE</div>
+    <div class="pulse-value">${top[0].toUpperCase()} is the most frequently recorded emotion (${topPct}% of receipts)</div>
+    <div class="pulse-detail">Across all submissions: ${dP}% of emotional tags indicate economic distress while ${sP}% indicate sustaining conditions. The ratio of distress to sustenance is a measure of collective economic pressure.</div>`;
+}
+
+// ---- EMOTION BARS ----
+function renderEmotionBars() {
+  const el = document.getElementById('emotion-bars');
+  const counts = {}; let max = 0;
+  entries.forEach(e=>e.tags.forEach(t=>{counts[t]=(counts[t]||0)+1;if(counts[t]>max)max=counts[t]}));
+  const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  el.innerHTML = sorted.map(([t,c])=>{
+    const pct=max?(c/max)*100:0, rP=entries.length?((c/entries.length)*100).toFixed(0):0;
+    return `<div class="emotion-bar-row"><span class="emotion-bar-label">${t.toUpperCase()}</span><div class="emotion-bar-track"><div class="emotion-bar-fill" style="width:${pct}%"></div></div><span class="emotion-bar-count">${c}</span><span class="emotion-bar-pct">${rP}%</span></div>`;
+  }).join('');
+}
+
+// ---- CO-OCCURRENCES ----
+function renderCoOccurrences() {
+  const el = document.getElementById('emotion-pairs');
+  const pairs = {};
+  entries.forEach(e=>{const t=[...e.tags].sort();for(let i=0;i<t.length;i++)for(let j=i+1;j<t.length;j++){const k=t[i]+' + '+t[j];pairs[k]=(pairs[k]||0)+1}});
+  const sorted = Object.entries(pairs).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const max = sorted.length?sorted[0][1]:1;
+  el.innerHTML = sorted.map(([p,c])=>`<div class="pair-row"><span class="pair-tags">${p.toUpperCase()}</span><div class="pair-bar-track"><div class="pair-bar-fill" style="width:${(c/max)*100}%"></div></div><span class="pair-count">${c}</span></div>`).join('');
+}
+
+// ---- HELPERS ----
+function fmtStore(v) {
+  for (const g of STORE_TYPES) for (const it of g.items) if (it.v===v) return it.l;
+  return v.toUpperCase();
+}
+function fmtRegion(v) {
+  for (const g of REGIONS) for (const it of g.items) if (it.v===v) return it.l;
+  return v.toUpperCase();
+}
+function fmtDate(d) {
+  const dt=new Date(d+'T12:00:00');
+  return `${dt.getDate()} ${['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'][dt.getMonth()]} ${dt.getFullYear()}`;
+}
+
+</script>
+</body>
+</html>
