@@ -4,7 +4,7 @@
 
 // ---- CONFIG ----
 
-const API_KEY = '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';
+const API_KEY = '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';
 
 // ---- SPLASH SCREEN ----
 (function initSplash() {
